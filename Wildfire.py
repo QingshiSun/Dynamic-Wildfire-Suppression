@@ -24,7 +24,7 @@ LEFT = 3
 
 class WildFireEnv_local(discrete.DiscreteEnv):
     def __init__(self):
-        self.shape=(4,4)
+        self.shape=(40,40)
         self.map=np.zeros(self.shape)
         self.size=np.prod(self.shape)
 
