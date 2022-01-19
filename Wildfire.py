@@ -28,7 +28,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
         self.map=np.zeros(self.shape)
         self.size=np.prod(self.shape)
 
-        self.action_space_length = 2 # local mdp的大小
+        self.action_space_length = 2 
         self.single_action_space = self.action_space_length * self.action_space_length
 
         #
@@ -44,7 +44,6 @@ class WildFireEnv_local(discrete.DiscreteEnv):
         self.cost_percent=[0.2,0.3,0.5]
         self.cost_values=[-10,-5,-2]
 
-        # 哪些是代表的action
         self.MDP_indices = self.action_aggregate() #每个local mdp的左上角cell的index
         #print('MDP_indices',self.MDP_indices)
 
@@ -81,7 +80,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
 
 
     def reset(self):
-        # 可以不要seed
+
 
         self.F=np.random.random_integers(0,self.default_fuel,size=self.shape)
         self.X=np.random.binomial(1, self.initial_burn_procent, size=self.shape)
@@ -109,7 +108,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
                 actions.append(np.ravel_multi_index(i,self.shape))
         return actions
 
-### 初始化环境
+### 
 
     def edge_coordinates(self, coord):
 
@@ -126,7 +125,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
 
         fuel_level=self.F[new_position[0]][new_position[1]]
 
-        #风的情况等
+
         wind_strength = self.initial_wind[0]
         #acc是啥
         wind_acc = self.initial_wind[1]
@@ -186,8 +185,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
             else:
                 return 0
 
-####传播
-
+####
 
 
 
@@ -224,7 +222,7 @@ class WildFireEnv_local(discrete.DiscreteEnv):
         self.X=self.X-np.logical_not(is_consumed)*1
         #print('update1', self.X)
 
-        ### action选择
+        ### 
 
     def action_choice(self,size):
         #print('choice_X', self.X)
@@ -232,23 +230,23 @@ class WildFireEnv_local(discrete.DiscreteEnv):
         # return np.random.random_integers(0,self.size-1,size=self.action_size)这是给array
 
     def action_aggregate_choice(self):
-        # 或者列出来所有可以的action的位置
+        
         action = np.random.random_integers(0, self.size - 1)
         #print('initialaction',action)
         action = np.unravel_index(action, self.shape)
         x = action[0]
         y = action[1]
         while (x % self.action_space_length) != 0:
-            x = x - 1 # 这是根据4*4之后分成4个2*2的情况下的特殊案例，所以减一
+            x = x - 1 # 
         while (y % self.action_space_length) != 0:
             y = y - 1
-        action = np.ravel_multi_index((x, y), self.shape) #恢复index
+        action = np.ravel_multi_index((x, y), self.shape) #
         #print('choice', action)
         #print('index',np.where(self.actions == action))
-        index = np.where(self.MDP_indices == action)[0][0] #这里的actions里面是所有小格子的代表cell在full grid里面的index；然后返回的是想选的cell在actions里面的index
+        index = np.where(self.MDP_indices == action)[0][0] 
         return index
 
-##控制过程
+##
 
     def suppress(self,action):
         #print('sup',self.X)
@@ -319,7 +317,6 @@ class WildFireEnv_local(discrete.DiscreteEnv):
         return next_obs,reward,done, info
 
 
-#关于继承的加不加self的问题
 
 
 
