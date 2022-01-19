@@ -3,9 +3,7 @@ import random
 import gym
 import time
 import numpy as np
-#from WFQ_aggregate import QLearningAgent_aggregate
 
-#是不是hash的时候出现了很多重复的？
 
 # 'query' means that the process to find the action with maximum q value for each state
 # 'sample' means the process to select the final action after considering epsilon
@@ -77,15 +75,9 @@ class QLearningAgent_aggregate(object):
         return action
 
 
-    # 学习方法，也就是更新Q-table的方法
+
     def learn(self, obs, action, reward, next_obs, done):
-        """ off-policy
-            obs: 交互前的obs, s_t
-            action: 本次交互选择的action, a_t
-            reward: 本次动作获得的奖励r
-            next_obs: 本次交互后的obs, s_t+1
-            done: episode是否结束
-        """
+
         if not self.Q.__contains__(obs):
             self.Q[obs]=np.zeros(env.nA)
         if not self.Q.__contains__(next_obs):
@@ -111,9 +103,9 @@ class QLearningAgent_aggregate(object):
         print(npy_file + ' loaded.')
 
 
-
-
-
+        
+        
+        
 
 ########################################
 
@@ -150,7 +142,6 @@ class QLearningAgent(object):
         return total%env.nS
 
 
-    # 根据输入观察值，预测输出的动作值
     def query(self, obs):
         if not self.Q.__contains__(obs):
             self.Q[obs]=np.zeros(env.nA)
@@ -164,15 +155,8 @@ class QLearningAgent(object):
         return action
 
 
-    # 学习方法，也就是更新Q-table的方法
     def learn(self, obs, action, reward, next_obs, done):
-        """ off-policy
-            obs: 交互前的obs, s_t
-            action: 本次交互选择的action, a_t
-            reward: 本次动作获得的奖励r
-            next_obs: 本次交互后的obs, s_t+1
-            done: episode是否结束
-        """
+
         if not self.Q.__contains__(obs):
             self.Q[obs]=np.zeros(env.nA)
         if not self.Q.__contains__(next_obs):
@@ -238,10 +222,10 @@ class QLearningAgent_MDPs(object):
         return total%nS
 
 
-    # 根据输入观察值，预测输出的动作值
+
     def query(self, obs,size,table_i):
 
-        if table_i == 0:  #这里的序号是从1开始的
+        if table_i == 0:  
             q_table = self.Q1
         elif table_i == 1:
             q_table = self.Q2
@@ -250,9 +234,8 @@ class QLearningAgent_MDPs(object):
         else:
             q_table = self.Q4
         #####
-        # q_table = eval(self.'Q'+) 试图建立一个可以直接读取特定table的指令
-
-        ##### 这里的size是针对一个cell的情况的,还有下面的learn函数
+        
+        ##### 
         if not q_table.__contains__(obs):
             q_table[obs]=np.zeros(size)
 
@@ -310,15 +293,9 @@ class QLearningAgent_MDPs(object):
 
         return actions_list
 
-    # 学习方法，也就是更新Q-table的方法
+
     def learn(self, obs, action, reward, next_obs, done,table_i,size):
-        """ off-policy
-            obs: 交互前的obs, s_t
-            action: 本次交互选择的action, a_t
-            reward: 本次动作获得的奖励r
-            next_obs: 本次交互后的obs, s_t+1
-            done: episode是否结束
-        """
+
         if table_i == 0:
             q_table = self.Q1
         elif table_i == 1:
@@ -406,7 +383,7 @@ def run_episode_LocalMDPs(env, agent,times,totalTimes):
     NumOfMDP = 4
     localMDP_length = env.action_space_length
     x = 0
-    y = 0 # 用来计数，表明是不是完整读取了一个local MDP
+    y = 0 
     localMDP_shape = (localMDP_length,localMDP_length)
     localMDP_size = np.prod(localMDP_shape)
     numOfLocalMDP_row = env.shape[0] / env.action_space_length
@@ -436,12 +413,12 @@ def run_episode_LocalMDPs(env, agent,times,totalTimes):
 
     while True:
 
-        local_action = agent.sample(obs,localMDP_size,table_index) #输入size（16），方便形成每个state下面多少个q值（即每次选一个cell时等于一共多少个cell）；tableindex是读取哪一个table，在query用到
+        local_action = agent.sample(obs,localMDP_size,table_index) 
         #print('action',action)
 
         action = np.unravel_index(local_action, localMDP_shape)
-        #注意array里面一层层相套的格式
-        col = table_index % numOfLocalMDP_row * env.action_space_length  # 从local复原到full grid之下的（x,y）坐标；
+
+        col = table_index % numOfLocalMDP_row * env.action_space_length  # 
         row = int(table_index / numOfLocalMDP_row) * env.action_space_length
 
 
@@ -456,7 +433,7 @@ def run_episode_LocalMDPs(env, agent,times,totalTimes):
         next_obs,reward,done, info=env.step(action)
 
         next_obs = local_MDP_stateupdate(env,localMDP_length,index_x,index_y,localMDP_shape)
-        next_obs=agent.hash(next_obs,localMDP_shape) #得到采取该action之后的状态并且hash一下
+        next_obs=agent.hash(next_obs,localMDP_shape) #
 
         agent.learn(obs, local_action, reward, next_obs, done, table_index,localMDP_size)
 
